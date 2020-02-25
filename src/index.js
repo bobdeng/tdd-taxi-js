@@ -1,12 +1,43 @@
-export default function main(testDataFile = 'testData.txt') {
-  /* TODO
-    1. testDataFile为fixtures文件夹下的测试数据文件名，例如传入的值为"testData.txt"，注意并不包含文件路径。
-    2. 你写的程序将把testDataFile作为参数加载此文件并读取文件内的测试数据，并对每条测试数据计算结果。
-    3. 将所有计费结果拼接并使用\n分割，然后保存到receipt变量中。
-   */
-  const receipt = 'Hello World!';
+import { taxiFee } from './taxi';
+
+const fs = require('fs');
+const readline = require('readline');
+
+function getLineTaxFee(line) {
+  const taxi = parseLine(line);
+  return taxiFee(taxi.distance, taxi.waitingMinutes);
+}
+
+export default async function main(testDataFile = 'testData.txt') {
+  const lines = await readFileLines('src/fixtures/' + testDataFile);
+  const receipt = lines.map(getLineTaxFee)
+    .join('\n');
   console.log(receipt);
   return receipt;
 }
 
+async function readFileLines(file) {
+  return new Promise((resolve, reject) => {
+    const fRead = fs.createReadStream(file);
+    const objReadline = readline.createInterface({
+      input: fRead,
+    });
+    var arr = new Array();
+    objReadline.on('line', function (line) {
+      arr.push(line);
+    });
+    objReadline.on('close', function () {
+      resolve(arr);
+    });
+  });
+}
+
 main();
+
+export function parseLine(line) {
+  const reg = /(\d+)公里,等待(\d+)分钟/ig;
+  return {
+    distance: parseInt(line.replace(reg, '$1')),
+    waitingMinutes: parseInt(line.replace(reg, '$2')),
+  };
+}
