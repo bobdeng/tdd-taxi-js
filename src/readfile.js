@@ -1,5 +1,5 @@
-const fs = require('fs');
-const readline = require('readline');
+import fs from 'fs';
+import readline from 'readline';
 
 function readFileInLines(file) {
   const fRead = fs.createReadStream(file);
@@ -9,7 +9,7 @@ function readFileInLines(file) {
   return objReadline;
 }
 
-export function readFileLines(file) {
+export default async function readFileLines(file) {
   return new Promise(resolve => {
     const objReadline = readFileInLines(file);
     const arr = [];

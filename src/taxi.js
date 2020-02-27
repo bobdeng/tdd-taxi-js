@@ -14,7 +14,7 @@ function getComebackFee(distance) {
   return (distance - 8) * 0.4;
 }
 
-export function taxiFee(distance, waitingMinutes) {
+export default function taxiFee(distance, waitingMinutes) {
   const distanceFee = getDistanceFee(distance);
   const waitingFee = getWaitingFee(waitingMinutes);
   const comebackFee = getComebackFee(distance);
